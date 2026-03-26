@@ -1,4 +1,4 @@
-package com.sparkchargereflex
+package com.spark.charge.reflex
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

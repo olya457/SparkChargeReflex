@@ -1,4 +1,4 @@
-package com.sparkchargereflex
+package com.spark.charge.reflex
 
 import android.app.Application
 import com.facebook.react.PackageList
