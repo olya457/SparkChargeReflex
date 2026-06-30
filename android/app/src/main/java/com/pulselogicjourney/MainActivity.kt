@@ -1,4 +1,4 @@
-package com.spark.charge.reflex
+package com.pulselogicjourney
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

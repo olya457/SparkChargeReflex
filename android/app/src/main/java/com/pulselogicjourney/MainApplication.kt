@@ -1,4 +1,4 @@
-package com.spark.charge.reflex
+package com.pulselogicjourney
 
 import android.app.Application
 import com.facebook.react.PackageList
