@@ -1,4 +1,4 @@
-package com.pulselogicjourney
+package com.brainpulsechallenge
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

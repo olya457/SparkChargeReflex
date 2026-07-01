@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.pulselogicjourney"
+    namespace "com.brainpulsechallenge"
     defaultConfig {
-        applicationId "com.pulselogicjourney"
+        applicationId "com.brainpulsechallenge"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
