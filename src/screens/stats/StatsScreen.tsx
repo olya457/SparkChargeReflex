@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Alert,
   Animated,
   Dimensions,
   Easing,
@@ -9,10 +8,8 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Switch,
   Text,
   TouchableOpacity,
-  Vibration,
   View,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -49,6 +46,11 @@ type AppSettings = {
   notificationsEnabled: boolean;
 };
 
+type SettingVisualSwitchProps = {
+  enabled: boolean;
+  onPress: () => void;
+};
+
 const { height: SCREEN_H } = Dimensions.get('window');
 
 const isExtraSmall = SCREEN_H < 640;
@@ -69,6 +71,23 @@ const DEFAULT_SETTINGS: AppSettings = {
   vibrationEnabled: true,
   notificationsEnabled: true,
 };
+
+function SettingVisualSwitch({ enabled, onPress }: SettingVisualSwitchProps) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={onPress}
+      style={[styles.visualSwitch, enabled ? styles.visualSwitchOn : styles.visualSwitchOff]}
+    >
+      <View
+        style={[
+          styles.visualSwitchThumb,
+          enabled ? styles.visualSwitchThumbOn : styles.visualSwitchThumbOff,
+        ]}
+      />
+    </TouchableOpacity>
+  );
+}
 
 export default function StatsScreen({ navigation }: Props) {
   const [refreshing, setRefreshing] = useState(false);
@@ -121,45 +140,13 @@ export default function StatsScreen({ navigation }: Props) {
     }
   }, []);
 
-  const saveSettings = useCallback(async (next: AppSettings) => {
-    try {
-      await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
-    } catch {
-      Alert.alert('Save error', 'Unable to save settings right now.');
-    }
+  const toggleVibrationVisual = useCallback(() => {
+    setVibrationEnabled(value => !value);
   }, []);
 
-  const toggleVibration = useCallback(
-    (value: boolean) => {
-      setVibrationEnabled(value);
-
-      if (value) {
-        Vibration.vibrate(40);
-      }
-
-      void saveSettings({
-        vibrationEnabled: value,
-        notificationsEnabled,
-      });
-    },
-    [notificationsEnabled, saveSettings],
-  );
-
-  const toggleNotifications = useCallback(
-    (value: boolean) => {
-      setNotificationsEnabled(value);
-
-      if (vibrationEnabled) {
-        Vibration.vibrate(40);
-      }
-
-      void saveSettings({
-        vibrationEnabled,
-        notificationsEnabled: value,
-      });
-    },
-    [saveSettings, vibrationEnabled],
-  );
+  const toggleNotificationsVisual = useCallback(() => {
+    setNotificationsEnabled(value => !value);
+  }, []);
 
   const loadStats = useCallback(async () => {
     try {
@@ -442,12 +429,9 @@ export default function StatsScreen({ navigation }: Props) {
                 </View>
               </View>
 
-              <Switch
-                value={vibrationEnabled}
-                onValueChange={toggleVibration}
-                trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#4CC9F0' }}
-                thumbColor={vibrationEnabled ? '#FFD520' : '#999'}
-                ios_backgroundColor="rgba(255,255,255,0.15)"
+              <SettingVisualSwitch
+                enabled={vibrationEnabled}
+                onPress={toggleVibrationVisual}
               />
             </View>
 
@@ -462,12 +446,9 @@ export default function StatsScreen({ navigation }: Props) {
                 </View>
               </View>
 
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={toggleNotifications}
-                trackColor={{ false: 'rgba(255,255,255,0.15)', true: '#4CC9F0' }}
-                thumbColor={notificationsEnabled ? '#FFD520' : '#999'}
-                ios_backgroundColor="rgba(255,255,255,0.15)"
+              <SettingVisualSwitch
+                enabled={notificationsEnabled}
+                onPress={toggleNotificationsVisual}
               />
             </View>
           </View>
@@ -704,5 +685,34 @@ const styles = StyleSheet.create({
     fontSize: s(11, 10, 9),
     fontWeight: '600',
     marginTop: 1,
+  },
+  visualSwitch: {
+    width: s(48, 44, 40),
+    height: s(28, 26, 24),
+    borderRadius: s(16, 15, 14),
+    borderWidth: 1,
+    padding: 3,
+    justifyContent: 'center',
+  },
+  visualSwitchOn: {
+    backgroundColor: '#4CC9F0',
+    borderColor: 'rgba(255,255,255,0.55)',
+  },
+  visualSwitchOff: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  visualSwitchThumb: {
+    width: s(20, 18, 16),
+    height: s(20, 18, 16),
+    borderRadius: s(10, 9, 8),
+  },
+  visualSwitchThumbOn: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#FFD520',
+  },
+  visualSwitchThumbOff: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#999',
   },
 });
